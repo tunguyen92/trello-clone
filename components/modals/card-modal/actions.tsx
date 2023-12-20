@@ -1,16 +1,16 @@
 "use client";
 
-import { toast } from "sonner";
 import { Copy, Trash } from "lucide-react";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
-import { CardWithList } from "@/types";
-import { useAction } from "@/hooks/use-action";
-// import { copyCard } from "@/actions/copy-card";
+import { copyCard } from "@/actions/copy-card";
+import { deleteCard } from "@/actions/delete-card";
 import { Button } from "@/components/ui/button";
-// import { deleteCard } from "@/actions/delete-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAction } from "@/hooks/use-action";
 import { useCardModal } from "@/hooks/use-card-modal";
+import { CardWithList } from "@/types";
 
 interface ActionsProps {
   data: CardWithList;
@@ -20,48 +20,48 @@ export const Actions = ({ data }: ActionsProps) => {
   const params = useParams();
   const cardModal = useCardModal();
 
-  // const {
-  //   execute: executeCopyCard,
-  //   isLoading: isLoadingCopy,
-  // } = useAction(copyCard, {
-  //   onSuccess: (data) => {
-  //     toast.success(`Card "${data.title}" copied`);
-  //     cardModal.onClose();
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error);
-  //   },
-  // });
+  const { execute: executeCopyCard, isLoading: isLoadingCopy } = useAction(
+    copyCard,
+    {
+      onSuccess: data => {
+        toast.success(`Card "${data.title}" copied`);
+        cardModal.onClose();
+      },
+      onError: error => {
+        toast.error(error);
+      },
+    },
+  );
 
-  // const {
-  //   execute: executeDeleteCard,
-  //   isLoading: isLoadingDelete,
-  // } = useAction(deleteCard, {
-  //   onSuccess: (data) => {
-  //     toast.success(`Card "${data.title}" deleted`);
-  //     cardModal.onClose();
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error);
-  //   },
-  // });
+  const { execute: executeDeleteCard, isLoading: isLoadingDelete } = useAction(
+    deleteCard,
+    {
+      onSuccess: data => {
+        toast.success(`Card "${data.title}" deleted`);
+        cardModal.onClose();
+      },
+      onError: error => {
+        toast.error(error);
+      },
+    },
+  );
 
   const onCopy = () => {
     const boardId = params.boardId as string;
 
-    // executeCopyCard({
-    //   id: data.id,
-    //   boardId,
-    // });
+    executeCopyCard({
+      id: data.id,
+      boardId,
+    });
   };
 
   const onDelete = () => {
     const boardId = params.boardId as string;
 
-    // executeDeleteCard({
-    //   id: data.id,
-    //   boardId,
-    // });
+    executeDeleteCard({
+      id: data.id,
+      boardId,
+    });
   };
 
   return (
@@ -69,7 +69,7 @@ export const Actions = ({ data }: ActionsProps) => {
       <p className='text-xs font-semibold'>Actions</p>
       <Button
         onClick={onCopy}
-        // disabled={isLoadingCopy}
+        disabled={isLoadingCopy}
         variant='gray'
         className='w-full justify-start'
         size='inline'
@@ -79,7 +79,7 @@ export const Actions = ({ data }: ActionsProps) => {
       </Button>
       <Button
         onClick={onDelete}
-        // disabled={isLoadingDelete}
+        disabled={isLoadingDelete}
         variant='gray'
         className='w-full justify-start'
         size='inline'

@@ -1,15 +1,15 @@
 "use server";
 
 import { auth } from "@clerk/nextjs";
+import { ACTION, ENTITY_TYPE } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/create-safe-action";
+import { db } from "@/lib/db";
 
-import { InputType, ReturnType } from "./types";
+import { createAuditLog } from "@/lib/create-audit-log";
 import { CreateBoard } from "./schema";
-// import { createAuditLog } from "@/lib/create-audit-log";
-// import { ACTION, ENTITY_TYPE } from "@prisma/client";
+import { InputType, ReturnType } from "./types";
 // import { incrementAvailableCount, hasAvailableCount } from "@/lib/org-limit";
 // import { checkSubscription } from "@/lib/subscription";
 
@@ -68,12 +68,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     //   await incrementAvailableCount();
     // }
 
-    // await createAuditLog({
-    //   entityTitle: board.title,
-    //   entityId: board.id,
-    //   entityType: ENTITY_TYPE.BOARD,
-    //   action: ACTION.CREATE,
-    // });
+    await createAuditLog({
+      entityTitle: board.title,
+      entityId: board.id,
+      entityType: ENTITY_TYPE.BOARD,
+      action: ACTION.CREATE,
+    });
   } catch (error) {
     return {
       error: "Failed to create.",
